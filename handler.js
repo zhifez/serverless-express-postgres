@@ -11,7 +11,7 @@ const client = new Client({
 client.connect();
 
 app.get('/', async (req, res, next) => {
-  await pool.query(`
+  await client.query(`
     CREATE TABLE IF NOT EXISTS users (
       ID SERIAL PRIMARY KEY,
       name VARCHAR(30),
