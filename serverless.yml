@@ -8,8 +8,8 @@ provider:
   environment:
     POSTGRES_HOST: !GetAtt RDSInstance.Endpoint.Address
     POSTGRES_DB: mydatabase
-    POSTGRES_USER: admin
-    POSTGRES_PASSWORD: admin@012$
+    POSTGRES_USER: myuser
+    POSTGRES_PASSWORD: mypassword
 
 functions:
   api:
@@ -43,19 +43,29 @@ resources:
         CidrBlock: 10.0.2.0/24
         AvailabilityZone: ap-southeast-1b
         MapPublicIpOnLaunch: true
+    DBSubnetGroup:
+      Type: AWS::RDS::DBSubnetGroup
+      Properties:
+        DBSubnetGroupDescription: DB Subnet Group
+        SubnetIds:
+          - !Ref PublicSubnet1
+          - !Ref PublicSubnet2
     RDSInstance:
       Type: AWS::RDS::DBInstance
       Properties:
         AllocatedStorage: 20
-        DBInstanceIdentifier: mydatabase
+        DBInstanceIdentifier: my-database
+        DBInstanceClass: db.t3.micro
         Engine: postgres
-        MasterUsername: admin
-        MasterUserPassword: admin@012$
+        MasterUsername: myuser
+        MasterUserPassword: mypassword
         StorageType: gp2
         VPCSecurityGroups:
           - !Ref RDSSecurityGroup
+        DBSubnetGroupName:
+          Ref: DBSubnetGroup
     RDSSecurityGroup:
       Type: AWS::EC2::SecurityGroup
       Properties:
-        GroupDescription: RDS security group
+        GroupDescription: RDS Security Group
         VpcId: !Ref Vpc
