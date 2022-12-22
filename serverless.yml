@@ -1,0 +1,61 @@
+service: aws-express-postgres-lambda
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: ap-southeast-1
+  environment:
+    POSTGRES_HOST: !GetAtt RDSInstance.Endpoint.Address
+    POSTGRES_DB: mydatabase
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: admin@012$
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: '*'
+
+resources:
+  Resources:
+    Vpc:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: 10.0.0.0/16
+        EnableDnsSupport: true
+        EnableDnsHostnames: true
+        InstanceTenancy: default
+        Tags:
+          - Key: Name
+            Value: MyVPC
+    PublicSubnet1:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref Vpc
+        CidrBlock: 10.0.1.0/24
+        AvailabilityZone: ap-southeast-1a
+        MapPublicIpOnLaunch: true
+    PublicSubnet2:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref Vpc
+        CidrBlock: 10.0.2.0/24
+        AvailabilityZone: ap-southeast-1b
+        MapPublicIpOnLaunch: true
+    RDSInstance:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        AllocatedStorage: 20
+        DBInstanceIdentifier: mydatabase
+        Engine: postgres
+        MasterUsername: admin
+        MasterUserPassword: admin@012$
+        StorageType: gp2
+        VPCSecurityGroups:
+          - !Ref RDSSecurityGroup
+    RDSSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: RDS security group
+        VpcId: !Ref Vpc
