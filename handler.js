@@ -1,20 +1,26 @@
 const serverless = require('serverless-http');
 const express = require('express');
 const app = express();
-const Pool = require('pg').Pool;
-const pool = new Pool({
+const { Client } = require('pg');
+const client = new Client({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
 });
+client.connect();
 
 app.get('/', async (req, res, next) => {
-  const results = await pool.query(`SELECT * FROM users`);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      ID SERIAL PRIMARY KEY,
+      name VARCHAR(30),
+      email VARCHAR(30)
+    );
+  `);
 
   return res.status(200).json({
-    message: 'Hello from root!',
-    data: results.rows,
+    message: 'Table created!',
   });
 });
 
