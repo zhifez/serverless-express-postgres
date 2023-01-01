@@ -18,7 +18,13 @@ app.use(
   })
 );
 
-app.get('/', async (_, res) => {
+app.get('/', (req, res, next) => {
+  return res.status(200).json({
+    message: 'Hello world',
+  });
+});
+
+app.get('/users', async (_, res) => {
   try {
     console.log('connect to db');
 
@@ -86,12 +92,6 @@ app.post('/users', async (req, res) => {
       error: error.message,
     });
   }
-});
-
-app.get('/hello', (req, res, next) => {
-  return res.status(200).json({
-    message: 'Hello from path!',
-  });
 });
 
 app.use((req, res, next) => {
