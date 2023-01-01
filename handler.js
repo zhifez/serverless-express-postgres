@@ -32,17 +32,19 @@ app.get('/users', async (_, res) => {
 
     console.log('create table if not exists');
 
-    const results = await client.query(`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         ID SERIAL PRIMARY KEY,
         name VARCHAR(30),
         email VARCHAR(30)
       );
-
-      SELECT * from users
     `);
 
-    console.log('results:', results.rowCount);
+    console.log('retrieve all users from db');
+
+    const results = await client.query(`
+      SELECT * from users
+    `);
 
     await client.end();
 
