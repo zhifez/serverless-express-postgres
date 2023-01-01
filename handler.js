@@ -47,7 +47,9 @@ app.get('/', async (_, res) => {
   } catch (error) {
     console.log(error);
     await client.end();
-    return res.status(500).json(error);
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 });
 
