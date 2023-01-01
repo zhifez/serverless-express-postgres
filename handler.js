@@ -1,5 +1,6 @@
 const serverless = require('serverless-http');
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 const { Client } = require('pg');
 const client = new Client({
@@ -9,6 +10,13 @@ const client = new Client({
   password: process.env.POSTGRES_PASSWORD,
   port: 5432,
 });
+
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 app.get('/', async (_, res) => {
   try {
@@ -24,16 +32,57 @@ app.get('/', async (_, res) => {
         name VARCHAR(30),
         email VARCHAR(30)
       );
+
+      SELECT * from users
+    `);
+
+    console.log('results:', results.rowCount);
+
+    await client.end();
+
+    return res.status(200).json({
+      message: 'Users retrieved successfully',
+      data: results.rows,
+    });
+  } catch (error) {
+    console.log(error);
+    await client.end();
+    return res.status(500).json(error);
+  }
+});
+
+app.post('/users', async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    console.log({ params: req.body });
+
+    if (!name || !email) {
+      throw new Error(`"name" and "email" fields are required`);
+    }
+
+    console.log('connect to db');
+
+    await client.connect();
+
+    console.log('create user');
+
+    await client.query(`
+      INSERT INTO users(name, email)
+      VALUES ('${name}', '${email}')
     `);
 
     await client.end();
 
     return res.status(200).json({
-      message: 'Table created!',
+      message: 'User created',
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json(error);
+    await client.end();
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 });
 
