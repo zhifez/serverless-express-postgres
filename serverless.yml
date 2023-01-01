@@ -7,7 +7,7 @@ provider:
   region: ap-southeast-1
   environment:
     POSTGRES_HOST: !GetAtt RDSInstance.Endpoint.Address
-    POSTGRES_DB: mydatabase
+    POSTGRES_DB: postgres
     POSTGRES_USER: myuser
     POSTGRES_PASSWORD: mypassword
 
