@@ -1,4 +1,4 @@
-# aws-express-postgres-lambda
+# serverless-express-postgres
 
 A serverless experiment to setup a NodeJS-Express Lambda application that's connected to a Postgres DB running in RDS.
 
