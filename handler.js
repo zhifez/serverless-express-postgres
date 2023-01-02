@@ -35,6 +35,9 @@ app.get('/users', async (_, res) => {
         name VARCHAR(30),
         email VARCHAR(30)
       );
+
+      INSERT INTO users(name, email)
+      VALUES ('John Doe', 'john.doe@gmail.com')
     `);
 
     console.log('retrieve all users from db');

@@ -56,6 +56,21 @@ resources:
         SubnetIds:
           - !Ref PublicSubnet1
           - !Ref PublicSubnet2
+    LambdaSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: Lambda Security Group
+        VpcId: !Ref Vpc
+    RDSSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: RDS Security Group
+        VpcId: !Ref Vpc
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 5432
+            ToPort: 5432
+            SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
     RDSInstance:
       Type: AWS::RDS::DBInstance
       Properties:
@@ -70,18 +85,3 @@ resources:
           - !Ref RDSSecurityGroup
         DBSubnetGroupName:
           Ref: DBSubnetGroup
-    RDSSecurityGroup:
-      Type: AWS::EC2::SecurityGroup
-      Properties:
-        GroupDescription: RDS Security Group
-        VpcId: !Ref Vpc
-        SecurityGroupIngress:
-          - IpProtocol: tcp
-            FromPort: 5432
-            ToPort: 5432
-            SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
-    LambdaSecurityGroup:
-      Type: AWS::EC2::SecurityGroup
-      Properties:
-        GroupDescription: Lambda Security Group
-        VpcId: !Ref Vpc
