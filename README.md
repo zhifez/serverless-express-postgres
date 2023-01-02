@@ -8,6 +8,6 @@ To deploy, simply run:
 
 `sls deploy`
 
-<!-- ## Documentation
+## Documentation
 
-The full documentation of what this code does is available here: <insert > -->
+A little documentation of what the codes do is available here: https://zhifez-lee.medium.com/serverless-setting-up-a-nodejs-lambda-with-a-postgres-db-hosted-in-rds-e4f45ea2f6ab
